@@ -16,8 +16,7 @@ var textField = Ti.UI.createTextField({
 // when the return button is clicked on the virtual keyboard
 textField.addEventListener('return', function(data) 
 {
-	
-	
+		
 	// save the text to the database
 	getThings(textField.value);
 	
@@ -43,6 +42,136 @@ var activityIndicator = Ti.UI.createActivityIndicator({
 	zIndex: 1
 });
 
+
+var Barcode = require('ti.barcode');
+Barcode.allowRotation = true;
+Barcode.displayedMessage = '';
+Barcode.useLED = true;
+
+var overlay = Ti.UI.createView({
+    backgroundColor: 'transparent',
+    top: 0, right: 0, bottom: 0, left: 0
+});
+var switchButton = Ti.UI.createButton({
+    title: Barcode.useFrontCamera ? 'Back Camera' : 'Front Camera',
+    textAlign: 'center',
+    color: '#000', backgroundColor: '#fff', style: 0,
+    font: { fontWeight: 'bold', fontSize: 16 },
+    borderColor: '#000', borderRadius: 10, borderWidth: 1,
+    opacity: 0.5,
+    width: 220, height: 30,
+    bottom: 10
+});
+switchButton.addEventListener('click', function () {
+    Barcode.useFrontCamera = !Barcode.useFrontCamera;
+    switchButton.title = Barcode.useFrontCamera ? 'Back Camera' : 'Front Camera';
+});
+overlay.add(switchButton);
+var toggleLEDButton = Ti.UI.createButton({
+    title: Barcode.useLED ? 'LED is On' : 'LED is Off',
+    textAlign: 'center',
+    color: '#000', backgroundColor: '#fff', style: 0,
+    font: { fontWeight: 'bold', fontSize: 16 },
+    borderColor: '#000', borderRadius: 10, borderWidth: 1,
+    opacity: 0.5,
+    width: 220, height: 30,
+    bottom: 40
+});
+toggleLEDButton.addEventListener('click', function () {
+    Barcode.useLED = !Barcode.useLED;
+    toggleLEDButton.title = Barcode.useLED ? 'LED is On' : 'LED is Off';
+});
+overlay.add(toggleLEDButton);
+
+var cancelButton = Ti.UI.createButton({
+    title: 'Cancel', textAlign: 'center',
+    color: '#000', backgroundColor: '#fff', style: 0,
+    font: { fontWeight: 'bold', fontSize: 16 },
+    borderColor: '#000', borderRadius: 10, borderWidth: 1,
+    opacity: 0.5,
+    width: 220, height: 30,
+    top: 20
+});
+cancelButton.addEventListener('click', function () {
+    Barcode.cancel();
+});
+overlay.add(cancelButton);
+
+
+var scanCode = Ti.UI.createButton({
+    title: 'QRcode',
+    width: 200,
+    left:245,
+    height: 40,
+    top: 18
+});
+scanCode.addEventListener('click', function () {
+    reset();
+    // Note: while the simulator will NOT show a camera stream in the simulator, you may still call "Barcode.capture"
+    // to test your barcode scanning overlay.
+    Barcode.capture({
+        animate: true,
+        overlay: overlay,
+        showCancel: false,
+        showRectangle: false,
+        keepOpen: true/*,
+        acceptedFormats: [
+            Barcode.FORMAT_QR_CODE
+        ]*/
+    });
+});
+
+/**
+ * Now listen for various events from the Barcode module. This is the module's way of communicating with us.
+ */
+var scannedBarcodes = {}, scannedBarcodesCount = 0;
+function reset() {
+    scannedBarcodes = {};
+    scannedBarcodesCount = 0;
+    cancelButton.title = 'Cancel';
+
+    
+}
+Barcode.addEventListener('error', function (e) {
+    
+});
+Barcode.addEventListener('cancel', function (e) {
+    Ti.API.info('Cancel received');
+});
+Barcode.addEventListener('success', function (e) {
+    Ti.API.info('Success called with barcode: ' + e.result);
+    if (!scannedBarcodes['' + e.result]) {
+        scannedBarcodes[e.result] = true;
+        scannedBarcodesCount += 1;
+        cancelButton.title = 'Finished (' + scannedBarcodesCount + ' Scanned)';
+        
+        getThings(parseResult(e));
+    }
+});
+
+
+function parseResult(event) {
+    var msg = '';
+    switch (event.contentType) {
+        case Barcode.URL:
+            msg = event.result;
+            break;
+        case Barcode.SMS:
+            msg = JSON.stringify(event.data);
+            break;
+        
+        case Barcode.TEXT:
+            msg = event.result;
+            break;
+        
+
+        case Barcode.CONTACT:
+            msg =  JSON.stringify(event.data);
+            break;
+        
+    }
+    return msg;
+}
 
 
 // create a table view to hold our things
@@ -234,6 +363,8 @@ win.addEventListener ('close', function (e) {
 
 win.add(textField);
 win.add(activityIndicator);
+win.add(scanCode);
+
 win.add(thingsTable);
 
 

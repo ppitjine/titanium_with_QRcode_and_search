@@ -1,0 +1,1 @@
+exports.Tabs=function(a){function i(){t=require("/Tabs/Window1/Window1"),l=t.Window1(a)}function o(){s=require("/Tabs/Window2/Window2"),d=s.Window2(a)}var t,l,s,d,r;r=Titanium.UI.createTabGroup({name:"Tabs",autoCreate:!0}),a.aoChildWindows.Tabs=r,a.Tabs=r;return r.aoChildWindows={},i(),o(),r.open(),r};

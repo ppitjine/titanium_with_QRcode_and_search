@@ -1,0 +1,8 @@
+"/Users/chaoweinung/Documents/Titanium_Studio_Workspace/search_demo/build/android/gen/android/support/v7/appcompat/R.java"
+"/Users/chaoweinung/Documents/Titanium_Studio_Workspace/search_demo/build/android/gen/com/companyname/appname/ApplicationStylesheet.java"
+"/Users/chaoweinung/Documents/Titanium_Studio_Workspace/search_demo/build/android/gen/com/companyname/appname/AssetCryptImpl.java"
+"/Users/chaoweinung/Documents/Titanium_Studio_Workspace/search_demo/build/android/gen/com/companyname/appname/R.java"
+"/Users/chaoweinung/Documents/Titanium_Studio_Workspace/search_demo/build/android/gen/com/companyname/appname/Search_demoActivity.java"
+"/Users/chaoweinung/Documents/Titanium_Studio_Workspace/search_demo/build/android/gen/com/companyname/appname/Search_demoAppInfo.java"
+"/Users/chaoweinung/Documents/Titanium_Studio_Workspace/search_demo/build/android/gen/com/companyname/appname/Search_demoApplication.java"
+"/Users/chaoweinung/Documents/Titanium_Studio_Workspace/search_demo/build/android/gen/ti/modules/titanium/ui/R.java"

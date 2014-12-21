@@ -4,11 +4,11 @@ exports.Window1 = function (g_Vars)
 // Add textfield
 var textField = Ti.UI.createTextField({
 	borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
-	hintText : 'Type in a thing',
+	hintText : '請輸入物流碼...',
 	color: '#336699',
 	top: 10,
 	left: 10,
-	width: 300, 
+	width: 250, 
 	height: 50
 });
 
@@ -45,8 +45,13 @@ var activityIndicator = Ti.UI.createActivityIndicator({
 
 var Barcode = require('ti.barcode');
 Barcode.allowRotation = true;
+if (Ti.Platform.osname === 'android') {
+	Barcode.allowInstructions = false;
+	
+}
 Barcode.displayedMessage = '';
 Barcode.useLED = true;
+
 
 var overlay = Ti.UI.createView({
     backgroundColor: 'transparent',
@@ -67,21 +72,24 @@ switchButton.addEventListener('click', function () {
     switchButton.title = Barcode.useFrontCamera ? 'Back Camera' : 'Front Camera';
 });
 overlay.add(switchButton);
-var toggleLEDButton = Ti.UI.createButton({
-    title: Barcode.useLED ? 'LED is On' : 'LED is Off',
-    textAlign: 'center',
-    color: '#000', backgroundColor: '#fff', style: 0,
-    font: { fontWeight: 'bold', fontSize: 16 },
-    borderColor: '#000', borderRadius: 10, borderWidth: 1,
-    opacity: 0.5,
-    width: 220, height: 30,
-    bottom: 40
-});
-toggleLEDButton.addEventListener('click', function () {
-    Barcode.useLED = !Barcode.useLED;
-    toggleLEDButton.title = Barcode.useLED ? 'LED is On' : 'LED is Off';
-});
-overlay.add(toggleLEDButton);
+
+if (Ti.Platform.osname === 'iphone') {
+	var toggleLEDButton = Ti.UI.createButton({
+	    title: Barcode.useLED ? 'LED is On' : 'LED is Off',
+	    textAlign: 'center',
+	    color: '#000', backgroundColor: '#fff', style: 0,
+	    font: { fontWeight: 'bold', fontSize: 16 },
+	    borderColor: '#000', borderRadius: 10, borderWidth: 1,
+	    opacity: 0.5,
+	    width: 220, height: 30,
+	    bottom: 40
+	});
+	toggleLEDButton.addEventListener('click', function () {
+	    Barcode.useLED = !Barcode.useLED;
+	    toggleLEDButton.title = Barcode.useLED ? 'LED is On' : 'LED is Off';
+	});
+	overlay.add(toggleLEDButton);
+}
 
 var cancelButton = Ti.UI.createButton({
     title: 'Cancel', textAlign: 'center',
@@ -97,14 +105,23 @@ cancelButton.addEventListener('click', function () {
 });
 overlay.add(cancelButton);
 
-
-var scanCode = Ti.UI.createButton({
-    title: 'QRcode',
-    width: 200,
-    left:245,
-    height: 40,
-    top: 18
-});
+if (Ti.Platform.osname === 'iphone') {
+	var scanCode = Ti.UI.createButton({
+	    title: 'QRcode',
+	    width: 200,
+	    left:245,
+	    height: 40,
+	    top: 18
+	});
+}else{
+	var scanCode = Ti.UI.createButton({
+	    title: 'QRcode',
+	    width: 200,
+	    left:260,
+	    height: 40,
+	    top: 18
+	    });
+}
 scanCode.addEventListener('click', function () {
     reset();
     // Note: while the simulator will NOT show a camera stream in the simulator, you may still call "Barcode.capture"
@@ -230,7 +247,7 @@ function getThings(thing)
 				var row2 = Ti.UI.createTableViewRow();
 				// create a label inside the table row
 				var titleLabel2 = Ti.UI.createLabel({
-					text: "到達："+json.things[0].item_to,
+					text: "目的地："+json.things[0].item_to,
 					left: 10,
 					top: 10,
 					height: 40,
@@ -278,7 +295,7 @@ function getThings(thing)
 					text: "說明："+json.things[0].item_description,
 					left: 10,
 					top: 10,
-					height: 40,
+					height: 60,
 					width: 290
 				});
 				row5.add(titleLabel5);
